@@ -1,0 +1,93 @@
+@startuml
+
+package "Bank" : Gestion globale et agrégation des clients.
+{
+    ' This package contains the classes and interfaces for the KataBank application.
+
+    ' Interfaces
+    interface IBank {
+        +IList<IClient> GetClientList()
+        +void AddClient(IClient client)
+        +IClient SearchClient(String email)
+        +Decimal GetMonthlyPNL()
+    }
+
+    ' Classes
+    class KataBank {
+        -IDictionary<string, IClient> clients
+        +void AddClient(IClient client)
+        +IList<IClient> GetClientList()
+        +decimal GetMonthlyPNL()
+        +IClient SearchClient(string email)
+    }
+
+    ' Relations d'héritage et d'implémentation
+    IBank <|.. KataBank
+
+}  
+
+package "Client" {
+    
+    interface IClient {
+        +String GetEmail()
+        +IEnumerable<Object> GetProductList()
+        +Decimal GetMonthlyBalance()
+        +void AddProduct(String productType, Double amount)
+    }
+
+    class Client {
+        -string email
+        -IList<IProduct> productList
+        +Client(string email)
+        +void AddProduct(string productType, double amount)
+        +string GetEmail()
+        +decimal GetMonthlyBalance()
+        +IEnumerable<object> GetProductList()
+    }
+
+    ' Relations d'héritage et d'implémentation
+    IClient <|.. Client
+
+}
+
+package "Product" {
+  
+    interface IProduct {
+        +double getAmount()
+        +double getRate()
+        +decimal getMonthlyValue()
+    }   
+
+    abstract class Product {
+        #double rate
+        -double amount
+        +Product(double amount)
+        +double getAmount()
+        +double getRate()
+        +decimal getMonthlyValue()
+    }
+
+    IProduct <|.. Product
+            
+    class LDD
+    class Pret
+    class CompteAVue
+    class LivretA
+
+    ' Relations d'héritage et d'implémentation
+    Product <|-- Pret
+    Product <|-- CompteAVue
+    Product <|-- LDD
+    Product <|-- LivretA
+  
+}
+
+
+' Agrégation/Composition
+' KataBank "1" o-- "*" IClient
+' Client "1" o-- "*" IProduct
+
+Bank "1" o-- "*" Client : "Bank manages clients"
+Client "1" o-- "*" Product : "Client owns products"
+
+@enduml
